@@ -71,27 +71,27 @@ bool WlanPacket::setSafeCommand(QByteArray Com)
 
 int WlanPacket::getCommandOffset()
 {
-    if ((Direction == DIR_UPSTREAM) || (Direction == DIR_SPECSTREAM))
+    /*if ((Direction == DIR_UPSTREAM) || (Direction == DIR_SPECSTREAM))
         return LONGCOMMAND_OFFSET;
     if (Direction == DIR_DOWNSTREAM)
         return SHORTCOMMAND_OFFSET;
     qDebug() << DIRECTION_ERROR;
-    return -1;
+    return -1;*/
 }
 
 int WlanPacket::getCommandLength()
 {
-    if ((Direction == DIR_UPSTREAM) || (Direction == DIR_SPECSTREAM))
+    /*if ((Direction == DIR_UPSTREAM) || (Direction == DIR_SPECSTREAM))
         return LONGCOMMAND_LENGTH;
     if (Direction == DIR_DOWNSTREAM)
         return SHORTCOMMAND_LENGTH;
     qDebug() << DIRECTION_ERROR;
-    return -1;
+    return -1;*/
 }
 
 bool WlanPacket::Assemble()
 {
-    Packet.resize(0);
+    /*Packet.resize(0);
     Packet.append(Direction);
     Packet.append(FuncAddr);
     if (Direction == DIR_DOWNSTREAM)
@@ -102,7 +102,7 @@ bool WlanPacket::Assemble()
         qDebug() << COMMAND_LENGTH_ERROR;
         return false;
     }
-    return true;
+    return true;*/
 }
 
 QByteArray WlanPacket::getPacket()
@@ -112,10 +112,10 @@ QByteArray WlanPacket::getPacket()
 
 bool WlanPacket::SpecSET_BRIDGE(QString Path)
 {
-    Direction = DIR_SPECSTREAM;
+    /*Direction = DIR_SPECSTREAM;
     FuncAddr = SPEC_FUNC_ADDR;
     QByteArray Com("");
     Com.append(SPEC_SET_BRIDGE);
     Com.append(Path);
-    return setSafeCommand(Com);
+    return setSafeCommand(Com);*/
 }

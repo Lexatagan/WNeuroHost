@@ -4,6 +4,7 @@
 TCPServer::TCPServer(QObject *parent) :
     QObject(parent)
 {
+    qDebug() << TCP_STARTING;
     TcpServ = new QTcpServer(this);
     connect(TcpServ, SIGNAL(newConnection()), this, SLOT(newConnection()));
     if (!TcpServ->listen(QHostAddress::Any, TCP_LISTENING_PORT))
@@ -33,17 +34,23 @@ TWlanMessage Msg;
     socket->waitForReadyRead();
     TcpMessage = socket->readLine(1000);
 
-    qDebug() << RECIEVEDDATA << TcpMessage;
+    qDebug() << TCP_REQUEST_RECIEVED << TcpMessage;
+    qDebug() << TCP_REQUEST_CHECKING;
 
-    if (Msg.LoadFromTcpRequest(TcpMessage))
+    if ((TcpMessage.indexOf(TCP_DEVICETAG, 0) > 0) &&
+        (TcpMessage.indexOf(TCP_FUNCTIONTAG, 0) > 0) &&
+        (TcpMessage.indexOf(TCP_COMMANDTAG, 0) > 0))
     {
-        qDebug() << PARSING_SUCCESS;
-        emit(Send(Msg));
+        qDebug() << TCP_FORMAT_OK;
+        emit(Recieved(&TcpMessage));
+        socket->write(TCP_ANSWEAR_OK);
     }
     else
-        qDebug() << PARSING_FAILED;
+    {
+        qDebug() << TCP_FORMAT_FAIL;
+        socket->write(TCP_ANSWEAR_REJECTED);
+    }
 
-    socket->write("OK \r\n");
     socket->flush();
     socket->waitForBytesWritten(1000);
     socket->close();

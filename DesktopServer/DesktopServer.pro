@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport network
+QT       += core network serialport
 
 QT       -= gui
 
@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     wlanpacket.cpp \
     wlanPipe.cpp \
     tcpserver.cpp \
-    USBTransceiver.cpp
+    USBTransceiver.cpp \
+    lan.cpp
 
 HEADERS += \
     interface.h \
@@ -29,4 +30,5 @@ HEADERS += \
     wlanPipe.h \
     tcpserver.h \
     lusb0_usb.h \
-    USBTransceiver.h
+    USBTransceiver.h \
+    lan.h

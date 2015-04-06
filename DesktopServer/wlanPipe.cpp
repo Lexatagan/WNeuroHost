@@ -10,9 +10,9 @@ WlanPipe::WlanPipe(QObject *parent) :
     QObject(parent),
     Pack(new WlanPacket)
 {
-    routingTable["Nd1"] = "Ud1";
-    routingTable["Nd2"] = "Nd1";
-    routingTable["Nd3"] = "Nd1";
+    routingTable["d1N"] = "Sd1";
+    routingTable["d2N"] = "d1N";
+    routingTable["d3N"] = "d1N";
 
     BridgedRFAddr = DEFAULT_NONE_LAN_ADDR;
     BridgeThroughtRFAddr = DEFAULT_NONE_LAN_ADDR;
@@ -98,7 +98,7 @@ void WlanPipe::readResponse()
 
 void WlanPipe::SendMessage(TWlanMessage Msg)
 {
-    if ((Msg.RFAddr != BridgedRFAddr))
+    /*if ((Msg.RFAddr != BridgedRFAddr))
     {
         qDebug() << ROUTING_REBUILDBRIDGE;
         if (SetBridge(Msg.RFAddr))
@@ -114,7 +114,7 @@ void WlanPipe::SendMessage(TWlanMessage Msg)
     Pack->setDirection(DIR_UPSTREAM);
     Pack->setFuncAddr(Msg.FuncAddr);
     Pack->setSafeCommand(Msg.Command);
-    SendPacket(Pack->getPacket());
+    SendPacket(Pack->getPacket());*/
 }
 
 bool WlanPipe::SetBridge(QByteArray DestRFAddr)

@@ -1,7 +1,7 @@
 #include "USBTransceiver.h"
 #include <QTime>
 
-USBTransceiver::USBTransceiver(QObject *parent) :
+USBTransceiver::USBTransceiver() :
     Handle(NULL),
     PollingEnabled(FALSE)
 {
@@ -42,7 +42,7 @@ usb_dev_handle *USBTransceiver::Open()
 {
     struct usb_device *Dev;
     usb_dev_handle *hndl;
-    qDebug() << MSG_TRYINGTOCONNECT;
+    qDebug() << USB_TRYINGTOCONNECT;
     Close();
     Dev = Find();
     if (Dev)
@@ -53,18 +53,18 @@ usb_dev_handle *USBTransceiver::Open()
                 if (usb_claim_interface(hndl,0)>=0)
                 {
                     Handle = hndl;
-                    qDebug() << MSG_TRANSCEIVEROPENED;
+                    qDebug() << USB_TRANSCEIVEROPENED;
                     PollingEnabled = TRUE;
                 }
                 else
-                    qDebug() << TRANSCEIVER_CAPTION << "Error claiming interface.";
+                    qDebug() << USB_CAPTION << "Error claiming interface.";
             else
-                qDebug() << TRANSCEIVER_CAPTION << "Error setting configuration.";
+                qDebug() << USB_CAPTION << "Error setting configuration.";
         else
-            qDebug() << TRANSCEIVER_CAPTION << "Error opening device.";
+            qDebug() << USB_CAPTION << "Error opening device.";
     }
     else
-        qDebug() << TRANSCEIVER_CAPTION << "Device not found.";
+        qDebug() << USB_CAPTION << "Device not found.";
 
     return Handle;
 }
@@ -73,7 +73,7 @@ void USBTransceiver::Close()
 {
     if (Handle)
     {
-        qDebug() << MSG_TRANSCEIVERCLOSED;
+        qDebug() << USB_TRANSCEIVERCLOSED;
         usb_release_interface(Handle,0);
         usb_close(Handle);
         Handle = NULL;
@@ -97,7 +97,6 @@ void USBTransceiver::run()
     char Buf[LAN_PACKET_LENGTH];
     char *pBuf = Buf;
     int result = 0;
-    int cnt = 0;
     QTime time;
     time.start();
 
@@ -113,15 +112,14 @@ void USBTransceiver::run()
     }
 }
 
-void USBTransceiver::ParseMessage(TWlanMessage Msg)
+void USBTransceiver::SendPacket(TPacket *pPacket)
 {
-    WlanPacket *Pack;
     QByteArray Data;
-    char *pData = (char*)&Data;
-    Pack->setDirection(DIR_UPSTREAM);
-    Pack->setFuncAddr(Msg.FuncAddr);
-    Pack->setSafeCommand(Msg.Command);
-    Data = Pack->getPacket();
-    qDebug() << MSG_TRANSIEVED << Data;
-    usb_bulk_write(Handle, OUT_ENDPOINT, pData, LAN_PACKET_LENGTH, 100);
+    Data = pPacket->getValue();
+    qDebug() << USB_TRANSIEVED << pPacket->print();
+    if (Handle)
+        usb_bulk_write(Handle, OUT_ENDPOINT, (char*)(&Data), LAN_PACKET_LENGTH, 100);
+    else
+        qDebug() << USB_ERR_NOT_OPENED;
 }
+

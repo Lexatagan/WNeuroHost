@@ -4,9 +4,9 @@
 #include <QByteArray>
 
 
-#define DIR_UPSTREAM                    'U'
-#define DIR_DOWNSTREAM                  'D'
-#define DIR_SPECSTREAM                  'S'
+//#define DIR_UPSTREAM                    'U'
+//#define DIR_DOWNSTREAM                  'D'
+//#define DIR_SPECSTREAM                  'S'
 
 #define SPEC_FUNC_ADDR                  "R0"
 #define SPEC_SET_BRIDGE                 "SB"

@@ -1,5 +1,6 @@
 #include "interface.h"
 #include "USBTransceiver.h"
+#include "lan.h"
 //#include <QtSerialPort/QSerialPortInfo>
 
 Interface::Interface(QObject *parent) :
@@ -8,13 +9,16 @@ Interface::Interface(QObject *parent) :
     /*qDebug() << IF_AVAILABLE_PORTS;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
         qDebug() << "-" << info.portName();*/
-    USBTransceiver *pUSBTransceiver = new USBTransceiver;
+    USBTransceiver *pUSBTransceiver = new USBTransceiver();
     pUSBTransceiver->USBInit();
     pUSBTransceiver->Open();
 
-    WPipe = new WlanPipe(this);
-    WPipe->OpenPort();
     Server = new TCPServer(this);
-    connect(Server, SIGNAL(Send(TWlanMessage)), WPipe, SLOT(ParseMessage(TWlanMessage)));
-    connect(Server, SIGNAL(Send(TWlanMessage)), pUSBTransceiver, SLOT(ParseMessage(TWlanMessage)));
+
+    TLAN *pLAN = new TLAN(this);
+
+    connect(Server, SIGNAL(Recieved(QByteArray*)), pLAN, SLOT(PushTcpRequest(QByteArray*)));
+    connect(pLAN, SIGNAL(SendPacketToUSB(TPacket*)), pUSBTransceiver, SLOT(SendPacket(TPacket*)));
+
+    qDebug() << "--------Initialization done--------";
 }

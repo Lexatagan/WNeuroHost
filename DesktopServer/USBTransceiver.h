@@ -5,30 +5,33 @@
 #include <QDebug>
 #include <QThread>
 #include "lusb0_usb.h"
-#include"wlanPipe.h"
+#include "wlanPipe.h"
+#include "LAN.h"
 
 #define DEV_VID                                     0x0483
 #define DEV_PID                                     0x5740
 #define IN_ENDPOINT                                 0x81
 #define OUT_ENDPOINT                                0x02
 
-#define LAN_PACKET_LENGTH                           32
-#define TRANSCEIVER_CAPTION                         "USBTrans:  "
+#define USB_CAPTION                                 "USBTrans: "
 
-#define MSG_TRYINGTOCONNECT                         TRANSCEIVER_CAPTION << "trying to connect to VID:0x0483/PID:0x5740"
-#define MSG_TRANSCEIVEROPENED                       TRANSCEIVER_CAPTION << "connected successfully"
-#define MSG_TRANSCEIVERCLOSED                       TRANSCEIVER_CAPTION << "disconnected"
-#define MSG_RECIEVED                                TRANSCEIVER_CAPTION << "<- "
-#define MSG_TRANSIEVED                              TRANSCEIVER_CAPTION << "-> "
+#define USB_TRYINGTOCONNECT                         USB_CAPTION << "Trying to connect to VID:0x0483/PID:0x5740.."
+#define USB_TRANSCEIVEROPENED                       USB_CAPTION << "-connected successfully"
+#define USB_TRANSCEIVERCLOSED                       USB_CAPTION << "Disconnected"
+#define USB_RECIEVED                                USB_CAPTION << "<- "
+#define USB_TRANSIEVED                              USB_CAPTION << "-> "
 
-#define ROUTING_ERROR                               TRANSCEIVER_CAPTION << "Routing error!"
-#define ROUTING_SUCCESS                             TRANSCEIVER_CAPTION << "Routing OK"
-#define ROUTING_REBUILDBRIDGE                       TRANSCEIVER_CAPTION << "Rebuildiding bridge..."
+#define USB_ERR                                     USB_CAPTION << "error: "
+#define USB_ERR_NOT_OPENED                          USB_ERR << "USB transceiver not opened."
+//#define ROUTING_ERROR                               USB_CAPTION << "Routing error!"
+//#define ROUTING_SUCCESS                             USB_CAPTION << "Routing OK"
+//#define ROUTING_REBUILDBRIDGE                       USB_CAPTION << "Rebuildiding bridge..."
 
 class USBTransceiver : public QThread
 {
+    Q_OBJECT
 public:
-    explicit USBTransceiver(QObject *parent = 0);
+    explicit USBTransceiver();
     ~USBTransceiver();
     void USBInit();
     struct usb_device *Find();
@@ -46,7 +49,7 @@ private:
 signals:
 
 public slots:
-    void ParseMessage(TWlanMessage Msg);
+    void SendPacket(TPacket *pPacket);
 };
 
 #endif // USBTRANSCEIVER_H

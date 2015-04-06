@@ -12,7 +12,6 @@ class Interface : public QObject
 {
     Q_OBJECT
 private:
-    WlanPipe *WPipe;
     TCPServer *Server;
 public:
     explicit Interface(QObject *parent = 0);
